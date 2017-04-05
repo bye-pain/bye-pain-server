@@ -3,15 +3,12 @@
  */
 export class UsersDAO {
 
-  init(connection) {
-    this._connection = connection;
-  }
   /**
    *
    * GET all User.
    */
-  getAll(callback) {
-    this._connection.query("select * from produtos", callback);
+  getAll(user, callback) {
+    user.save(callback);
   }
 }
 

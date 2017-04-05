@@ -2,6 +2,7 @@
  * Created by crist on 01/04/2017.
  */
 import {Router} from 'express';
+import UserSchema from "./../models/user-schema";
 import {usersDAO} from "../dao/users-dao";
 import {DatabaseConnection} from "../config/database-connection";
 
@@ -33,10 +34,18 @@ export class UsersController {
    * GET all Users.
    */
   getAll(req, res) {
-    usersDAO.init(DatabaseConnection.createConnection());
-    usersDAO.getAll((err, results) => {
-      res.send(results);
-      DatabaseConnection.closeConnection();
+    DatabaseConnection.connection.then((err) => {
+      if (!err) {
+        let user = UserSchema({name: "teste", password: "teste"});
+        usersDAO.getAll(user, (err, res) => {
+          if (err) {
+            console.log(err);
+          }
+          else {
+            console.log(res);
+          }
+        });
+      }
     });
   }
 }
