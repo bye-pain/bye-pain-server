@@ -1,12 +1,8 @@
 /**
  * Created by crist on 04/04/2017.
  */
-class UsersModel {
-
-  constructor() {
-    this._username = "";
-    this._password = "";
-  }
+import mongoose from 'mongoose';
+class UsersModel extends mongoose.Model{
 
   get username() : String {
     return this._username;
@@ -17,4 +13,4 @@ class UsersModel {
   }
 }
 
-export const users = new Users();
+export const users = new UsersModel();

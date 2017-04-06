@@ -6,8 +6,11 @@ import * as databaseVariables from "./database-variables";
 
 export class DatabaseConnection {
 
-  static get connection() {
-    console.log(databaseVariables.MONGO_URL);
+  static open() {
     return mongoose.connect(databaseVariables.MONGO_URL);
+  }
+
+  static close(db) {
+    if (db) db.disconnect();
   }
 }
