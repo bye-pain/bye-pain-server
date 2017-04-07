@@ -7,7 +7,7 @@ class UserSchema extends mongoose.Schema {
 
   constructor() {
     super({
-      name: String,
+      username: String,
       password: String
     });
   }

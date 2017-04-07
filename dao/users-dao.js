@@ -7,6 +7,16 @@ import Users from "./../models/user-schema";
 export class UsersDAO {
 
   /**
+   * Create a User
+   */
+  save(User, callback) {
+    const db = DatabaseConnection.open();
+    const schema = Users({username: User.username, password: User.password});
+    schema.save(callback);
+    DatabaseConnection.close(db);
+  }
+
+  /**
    *
    * GET all User.
    */
