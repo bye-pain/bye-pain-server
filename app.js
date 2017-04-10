@@ -2,7 +2,11 @@
 import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
-import {routesController} from "./routes/routes-controller";
+import session from "express-session";
+import flash from "connect-flash";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+import {RoutesController} from "./routes/routes-controller";
 
 /**
  * The server.
@@ -13,7 +17,6 @@ class Server {
   constructor() {
     this.app = express();
     this.config();
-    this.routes();
   }
 
   /**
@@ -29,39 +32,35 @@ class Server {
   }
 
   config() {
-    this.app.set("view engine", "jade");
+    this.app.set("view engine", "jade"); // set up jade for templating
     this.app.set("views", path.join(__dirname, "views"));
+    this.app.use(express.static('public'));
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
+    this.app.use(cookieParser()); // read cookies (needed for auth)
+
+    // required for passport
+    this.app.use(session({
+      secret: 'mysecret',
+      resave: true,
+      saveUninitialized: true
+    })); // session secret
+
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
+
+    this.app.use(flash()); // use connect-flash for flash messages stored in session
+
+    new RoutesController(this.app); // Configure routes
 
     // middleware to use for all requests
     this.app.use(function (err, req, res, next) {
       const error = new Error("Not Found");
       err.status = 404;
-      err.message(error.message);
       next(err); // go to the next routes and don't stop here
     });
   }
 
-  /**
-   * Configure routes
-   *
-   * @class Server
-   * @method routes
-   * @return void
-   */
-  routes() {
-    //get router
-    let router = express.Router();
-
-    router.get('/', (req, res, next) => {
-      res.json({
-        message: 'Hello World!'
-      });
-    });
-    this.app.use('/', router);
-    routesController.getRoutes(this.app);
-  }
 }
 const server = Server.bootstrap();
 export default server.app;

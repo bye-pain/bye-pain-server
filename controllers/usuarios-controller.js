@@ -2,8 +2,8 @@
  * Created by crist on 01/04/2017.
  */
 import {Router} from 'express';
-import sha1 from "crypto/sha1";
 import {usersDAO} from "../dao/users-dao";
+import Users from "./../models/users-model";
 
 export class UsersController {
 
@@ -33,10 +33,7 @@ export class UsersController {
    * Create a User
    */
   save(req, res) {
-    const user = {
-      username: req.body.username,
-      password: sha1.b64_sha1(req.body.password)
-    };
+    const user = Users({username: req.body.username, password: req.body.password});
     return usersDAO.save(user, (err, Users) => {
       if (err) res.status(504);
       else if (Users) res.json(Users);
@@ -48,7 +45,7 @@ export class UsersController {
    * GET all Users.
    */
   getAll(req, res) {
-    return usersDAO.getAll((err, Users) => {
+    return usersDAO.getAll(Users, (err, Users) => {
       if (err) res.status(504);
       else if (Users) res.json(Users);
     });
