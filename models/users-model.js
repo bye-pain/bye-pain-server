@@ -8,10 +8,8 @@ class User extends mongoose.Schema {
 
   constructor() {
     super({
-      local: {
-        username: String,
-        password: String
-      }
+      username: String,
+      password: String
     });
   }
 
@@ -22,7 +20,7 @@ class User extends mongoose.Schema {
 
   // checking if password is valid
   validPassword(password) {
-    return bcrypt.compareSync(password, this.local.password);
+    return bcrypt.compareSync(password, this.password);
   };
 }
 

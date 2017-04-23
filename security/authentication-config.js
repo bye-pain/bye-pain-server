@@ -23,10 +23,8 @@ class Authentication {
 
     this._passport.use('login', new LocalStrategy({passReqToCallback: true}, (req, username, password, done) => {
       const db = DatabaseConnection.open();
-      User.findOne({local: {'username': username}}, (err, user) => {
+      User.findOne({'username': username}, (err, user) => {
         DatabaseConnection.close(db);
-        console.log(err);
-        console.log(user);
         if (err) return done(err);
         // Nome de usuário não existe, logar o erro & redirecione de volta
         if (!user) return done(null, false, req.flash('message', 'Usuário não encontrado.'));
@@ -59,8 +57,8 @@ class Authentication {
               const newUser = new User();
 
               // set the user's local credentials
-              newUser.local.username = username;
-              newUser.local.password = authentication.createHash(password);
+              newUser.username = username;
+              newUser.password = authentication.createHash(password);
 
               // save the user
               newUser.save(function (err) {
