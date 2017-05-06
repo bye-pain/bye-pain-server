@@ -3,9 +3,18 @@
  */
 const _ = require('lodash');
 const Users = require('./../models/users');
+const {encrypt} = require("./../../security/cryptography");
 
 Users.methods(['get', 'post', 'put', 'delete']);
 Users.updateOptions({new: true, runValidators: true});
+
+Users.before('post', cryptUserPassword).before('put', cryptUserPassword);
+
+function cryptUserPassword(req, res, next) {
+  if (req.body.password) req.body.password = encrypt(req.body.password);
+
+  next();
+}
 
 Users.after('post', sendErrorsOrNext).after('put', sendErrorsOrNext);
 
