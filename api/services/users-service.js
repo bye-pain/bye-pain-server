@@ -11,9 +11,19 @@ Users.updateOptions({new: true, runValidators: true});
 Users.before('post', cryptUserPassword).before('put', cryptUserPassword);
 
 function cryptUserPassword(req, res, next) {
-  if (req.body.password) req.body.password = encrypt(req.body.password);
-
-  next();
+  if (req.body._id) {
+    Users.findById(req.body._id, (err, User) => {
+      if (err) return res.send(err);
+      else if (!User) return res.status(204).json({err});
+      else {
+        if (req.body.password && (req.body.password != User.password)) req.body.password = encrypt(req.body.password);
+        next();
+      }
+    });
+  } else {
+    res.sendStatus(204);
+    next();
+  }
 }
 
 Users.after('post', sendErrorsOrNext).after('put', sendErrorsOrNext);
