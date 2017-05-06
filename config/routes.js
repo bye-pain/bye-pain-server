@@ -12,4 +12,7 @@ module.exports = app => {
   // rotas da API
   const usersService = require('../api/services/users-service');
   usersService.register(router, '/users');
+
+  const allergiesService = require("./../api/services/allergies-service");
+  allergiesService.register(router, '/allergies');
 };
