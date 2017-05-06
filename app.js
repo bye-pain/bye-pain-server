@@ -1,67 +1,18 @@
 "use strict";
-import express from "express";
-import bodyParser from "body-parser";
-import path from "path";
-import {routesController} from "./routes/routes-controller";
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const allowCors = require('./config/cors');
+const queryParser = require('express-query-int');
 
-/**
- * The server.
- *
- * @class Server
- */
-class Server {
-  constructor() {
-    this.app = express();
-    this.config();
-    this.routes();
-  }
+const app = express();
 
-  /**
-   * Bootstrap the application.
-   *
-   * @class Server
-   * @method bootstrap
-   * @static
-   * @return {Server} Returns the newly created injector for this app.
-   */
-  static bootstrap() {
-    return new Server();
-  }
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(allowCors);
+app.use(queryParser());
 
-  config() {
-    this.app.set("view engine", "jade");
-    this.app.set("views", path.join(__dirname, "views"));
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({extended: false}));
-
-    // middleware to use for all requests
-    this.app.use(function (err, req, res, next) {
-      const error = new Error("Not Found");
-      err.status = 404;
-      err.message(error.message);
-      next(err); // go to the next routes and don't stop here
-    });
-  }
-
-  /**
-   * Configure routes
-   *
-   * @class Server
-   * @method routes
-   * @return void
-   */
-  routes() {
-    //get router
-    let router = express.Router();
-
-    router.get('/', (req, res, next) => {
-      res.json({
-        message: 'Hello World!'
-      });
-    });
-    this.app.use('/', router);
-    routesController.getRoutes(this.app);
-  }
-}
-const server = Server.bootstrap();
-export default server.app;
+module.exports = app;
