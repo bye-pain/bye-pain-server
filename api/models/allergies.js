@@ -1,9 +1,6 @@
 /**
  * Created by crist on 06/05/2017.
  */
-/**
- * Created by crist on 06/05/2017.
- */
 const restful = require('node-restful');
 const mongoose = restful.mongoose;
 
